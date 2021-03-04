@@ -13,6 +13,9 @@ namespace Storage.Controllers
     public class ProductsController : Controller
     {
         private readonly StorageContext _context;
+        public List<ProductViewModel> ProductViewModels = new List<ProductViewModel>();
+        public List<Product> categories = new List<Product>();
+
 
         public ProductsController(StorageContext context)
         {
@@ -149,9 +152,62 @@ namespace Storage.Controllers
         {
             return _context.Product.Any(e => e.Id == id);
         }
-        public async Task<IActionResult> Index()
+
+        [HttpGet]
+        public async Task<IActionResult> Inventory()
         {
-            return View(await _context.Product.ToListAsync());
+            
+            var listproduct = await _context.Product.ToListAsync();
+          
+            foreach (var item in listproduct)
+            {
+
+                ProductViewModels.Add(new ProductViewModel
+                {
+                    Name = item.Name,
+                    Price = item.Price,
+                    Count = item.Count,
+                    InventoryValue = item.Count * item.Price
+                }) ; 
+
+            }
+
+
+            return View(ProductViewModels);
+
         }
+
+        public async Task<IActionResult> GetProcutByCategory(string category)
+        {
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+            var res = await _context.Product.ToListAsync();
+            res.Where(p => p.Category == category).ToList();
+
+            if (res == null)
+            {
+                return NotFound();
+            }
+
+            return View(res);
+        }
+        public async Task<IActionResult> Category(string searchString)
+        {
+            var products= from m in _context.Product
+                         select m;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(s => s.Category.Contains(searchString));
+            }
+
+            return View(await products.ToListAsync());
+        }
+
     }
-}
+ }
+
+

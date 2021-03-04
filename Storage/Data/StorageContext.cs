@@ -15,5 +15,7 @@ namespace Storage.Data
         }
 
         public DbSet<Product> Product { get; set; }
+
+        public DbSet<Storage.Models.ProductViewModel> ProductViewModel { get; set; }
     }
 }
