@@ -14,7 +14,7 @@ namespace Storage.Controllers
     {
         private readonly StorageContext _context;
         public List<ProductViewModel> ProductViewModels = new List<ProductViewModel>();
-       // public List<Product> categories = new List<Product>();
+      // public List<Product> categories = new List<Product>();
 
 
         public ProductsController(StorageContext context)
@@ -172,14 +172,13 @@ namespace Storage.Controllers
 
             }
 
-
             return View(ProductViewModels);
 
         }
         public async Task<IActionResult> Category(string searchString)
         {
-            var products= from m in _context.Product
-                         select m;
+            var products = from m in _context.Product
+                           select m;
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -196,8 +195,8 @@ namespace Storage.Controllers
                                             orderby p.Category
                                             select p.Category;
 
-            var products = from m in _context.Product
-                         select m;
+            var products = from p in _context.Product
+                         select p;
 
             if (!string.IsNullOrEmpty(searchString))
             {

@@ -5,14 +5,15 @@
 
 }
 
-<h1>GetProcutByCategory</h1>
+<h1>GetProductcutByCategory</h1>
 
 
 <form asp-controller="Products" asp-action="GetProductByCategory" method="get">
     <p>
         <select asp-for="ProductCategory" asp-items="Model.Categories">
-            <option value="">All</option>
+            <option   value="">All</option>
         </select>
+
         Name: <input type="text" name="SearchString" />
         <input type="submit" value="Filter" class="btn-dark"/>
     </p>
