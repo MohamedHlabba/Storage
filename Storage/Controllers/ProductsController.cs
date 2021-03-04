@@ -14,7 +14,7 @@ namespace Storage.Controllers
     {
         private readonly StorageContext _context;
         public List<ProductViewModel> ProductViewModels = new List<ProductViewModel>();
-        public List<Product> categories = new List<Product>();
+       // public List<Product> categories = new List<Product>();
 
 
         public ProductsController(StorageContext context)
@@ -176,24 +176,6 @@ namespace Storage.Controllers
             return View(ProductViewModels);
 
         }
-
-        public async Task<IActionResult> GetProcutByCategory(string category)
-        {
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-            var res = await _context.Product.ToListAsync();
-            res.Where(p => p.Category == category).ToList();
-
-            if (res == null)
-            {
-                return NotFound();
-            }
-
-            return View(res);
-        }
         public async Task<IActionResult> Category(string searchString)
         {
             var products= from m in _context.Product
@@ -205,6 +187,35 @@ namespace Storage.Controllers
             }
 
             return View(await products.ToListAsync());
+        }
+        // GET: Products
+        public async Task<IActionResult> GetProductByCategory(string searchCategory, string searchString)
+        {
+            // Use LINQ to get list of categories.
+            IQueryable<string> categoryQuery = from p in _context.Product
+                                            orderby p.Category
+                                            select p.Category;
+
+            var products = from m in _context.Product
+                         select m;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(p => p.Name.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(searchCategory))
+            {
+                products = products.Where(x => x.Category == searchCategory);
+            }
+
+            var productCategory= new ProductCategoryViewModel
+            {
+                Categories = new SelectList(await categoryQuery.Distinct().ToListAsync()),
+                Products = await products.ToListAsync()
+            };
+
+            return View(productCategory);
         }
 
     }
