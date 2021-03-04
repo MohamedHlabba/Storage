@@ -14,13 +14,13 @@ namespace Storage.Controllers
     {
         private readonly StorageContext _context;
         public List<ProductViewModel> ProductViewModels = new List<ProductViewModel>();
-      // public List<Product> categories = new List<Product>();
-
 
         public ProductsController(StorageContext context)
         {
             _context = context;
         }
+        
+
 
         // GET: Products
         public async Task<IActionResult> Index()
@@ -188,7 +188,8 @@ namespace Storage.Controllers
             return View(await products.ToListAsync());
         }
         // GET: Products
-        public async Task<IActionResult> GetProductByCategory(string searchCategory, string searchString)
+        [HttpGet]
+        public async Task<IActionResult> GetProductByCategory(string productCategory, string searchString)
         {
             // Use LINQ to get list of categories.
             IQueryable<string> categoryQuery = from p in _context.Product
@@ -203,18 +204,18 @@ namespace Storage.Controllers
                 products = products.Where(p => p.Name.Contains(searchString));
             }
 
-            if (!string.IsNullOrEmpty(searchCategory))
+            if (!string.IsNullOrEmpty(productCategory))
             {
-                products = products.Where(x => x.Category == searchCategory);
+                products = products.Where(x => x.Category == productCategory);
             }
 
-            var productCategory= new ProductCategoryViewModel
+            var productCategoryVM= new ProductCategoryViewModel
             {
                 Categories = new SelectList(await categoryQuery.Distinct().ToListAsync()),
                 Products = await products.ToListAsync()
             };
 
-            return View(productCategory);
+            return View(productCategoryVM);
         }
 
     }
